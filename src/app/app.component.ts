@@ -1,39 +1,23 @@
 import { Component } from '@angular/core';
-import { AsyncData, failure, pending, success } from '@nll/dux';
-import { none, Option, some } from 'fp-ts/lib/Option';
+import { AsyncData, pending } from '@nll/dux';
+import { createOptionFromOptional, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
+import { Either, right } from 'fp-ts/lib/Either';
+import { none, Option } from 'fp-ts/lib/Option';
+import * as t from 'io-ts';
 
-const genRandomAsyncData = () => {
-  const asyncCase = Math.floor(Math.random() * 1000) % 3;
-  const refreshing = !!(Math.floor(Math.random() * 1000) % 2);
-
-  switch (asyncCase) {
-    case 0:
-      return pending();
-    case 1:
-      return failure(new Error('Generated Error'), refreshing);
-    case 2:
-    default:
-      return success('Success Data', refreshing);
-  }
-};
-
-const genRandomOption = () => {
-  const optionCase = Math.floor(Math.random() * 1000) % 2;
-  const data = Math.floor(Math.random() * 1000);
-
-  switch (optionCase) {
-    case 0:
-      return none;
-    case 1:
-    default:
-      return some(data);
-  }
-};
+import { IoFormService } from '../../projects/ngx/src/lib/io-form/io-form.service';
+import { genRandomAsyncData, genRandomOption } from './utils';
 
 @Component({
   selector: 'app-root',
   template: `
     <div>
+      <h1>IO Form Test</h1>
+
+      <form [formGroup]="form" (submit)="handleSubmit(form.value)">
+        <button>Submit</button>
+      </form>
+
       <h1>Async Data Test</h1>
 
       <div [nllAsyncData]="asyncData">
@@ -80,7 +64,24 @@ export class AppComponent {
   asyncData: AsyncData<any, any> = pending();
   option: Option<any> = none;
 
-  constructor() {
+  output: Either<any, any> = right('initial');
+
+  // IO type should generally come from backend.
+  readonly io = t.interface({
+    foo: t.string,
+    bar: createOptionFromOptional(t.number),
+  });
+
+  // This is all it takes to create an arbitrarily sized form
+  readonly form = this.ioSvc.ioToForm(this.io);
+
+  handleSubmit(value: any) {
+    // Use the IO to validate the form as well.
+    this.output = this.io.decode(value);
+    console.log('handleSubmit', this.output);
+  }
+
+  constructor(readonly ioSvc: IoFormService) {
     setInterval(() => (this.asyncData = genRandomAsyncData()), 1 * 1000);
     setInterval(() => (this.option = genRandomOption()), 1 * 700);
   }

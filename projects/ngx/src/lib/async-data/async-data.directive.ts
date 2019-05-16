@@ -61,6 +61,9 @@ export class AsyncDataDirective {
    * has context set as readonly. Which is weird considering:
    *
    * https://github.com/angular/angular/blob/master/packages/common/src/directives/ng_for_of.ts#L240
+   *
+   * Likely, this means we can't change the context reference but
+   * we are allowed to change the context values and call checkForChanges
    */
   setCaseView = (caseView?: AsyncCaseView, context?: any) => {
     if (this.currentCaseView !== undefined) {

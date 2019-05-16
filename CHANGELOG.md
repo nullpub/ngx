@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.2](https://github.com/nullpub/ngx/compare/v0.2.1...v0.2.2) (2019-05-16)
+
+
+### Bug Fixes
+
+* fix exports (angular doesn't like barrels) ([77ede44](https://github.com/nullpub/ngx/commit/77ede44))
+
+
+
 ## [0.2.1](https://github.com/nullpub/ngx/compare/v0.2.0...v0.2.1) (2019-05-16)
 
 

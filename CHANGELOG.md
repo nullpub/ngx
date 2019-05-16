@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.2.0](https://github.com/nullpub/ngx/compare/v0.1.1...v0.2.0) (2019-05-16)
+
+
+### Features
+
+* either directive and io-forms tools ([e4c4a96](https://github.com/nullpub/ngx/commit/e4c4a96))
+
+
+
 ## [0.1.1](https://github.com/nullpub/ngx/compare/v0.1.0...v0.1.1) (2019-04-25)
 
 

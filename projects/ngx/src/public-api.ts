@@ -5,19 +5,20 @@
 /**
  * AsyncData Structural Directive
  */
-export * from './lib/async-data';
+export * from './lib/async-data/async-data.module';
 
 /**
  * Option Structural Directive
  */
-export * from './lib/option';
+export * from './lib/option/option.module';
 
 /**
  * Either Structural Directive
  */
-export * from './lib/either';
+export * from './lib/either/either.module';
 
 /**
  * Io Form
  */
-export * from './lib/io-form';
+export * from './lib/io-form/io-form.module';
+export * from './lib/io-form/io-form.service';

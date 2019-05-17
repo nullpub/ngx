@@ -42,20 +42,20 @@ export const ioToForm = (io: IO): FormGroup | IoFormArray | FormControl => {
     case 'InterfaceType':
       let group = {};
       for (let k in io.props) {
-        group[k] = this.ioToForm(io.props[k]);
+        group[k] = ioToForm(io.props[k]);
       }
       return new FormGroup(group);
 
     // FormArrays
     case 'ArrayType':
-      const generateControl = () => this.ioToForm(io.type);
+      const generateControl = () => ioToForm(io.type);
       return new IoFormArray([], undefined, undefined, generateControl);
 
     // Special Case: Unwrap Options
     case 'OptionFromOptionalType':
     case 'OptionFromNullableType':
       // Unwrap Option types
-      return this.ioToForm(io.type);
+      return ioToForm(io.type);
 
     // Default to FormControl for unknown types
     default:

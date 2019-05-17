@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.7.0](https://github.com/nullpub/ngx/compare/v0.6.0...v0.7.0) (2019-05-17)
+
+
+### Features
+
+* **io-form-array:** add parameter to pushControl with immediate value to patch ([9dba3d7](https://github.com/nullpub/ngx/commit/9dba3d7))
+
+
+
 # [0.6.0](https://github.com/nullpub/ngx/compare/v0.5.1...v0.6.0) (2019-05-17)
 
 

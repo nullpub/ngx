@@ -22,7 +22,9 @@ export class IoFormArray extends FormArray {
   }
 
   // An outside editable seed value
-  controlSeed?: any;
+  seedValue?: any;
+  seedValidators?: ValidatorFn | ValidatorFn[];
+  seedAsyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
 
   // Extend patchValue to autoGenerate controls
   patchValue(
@@ -41,8 +43,14 @@ export class IoFormArray extends FormArray {
   // Push a new control with seed value if it exists
   pushControl(): void {
     const control = this.generateControl();
-    if (this.controlSeed) {
-      control.patchValue(this.controlSeed);
+    if (this.seedValue) {
+      control.patchValue(this.seedValue);
+    }
+    if (this.seedValidators) {
+      control.setValidators(this.seedValidators);
+    }
+    if (this.seedAsyncValidators) {
+      control.setAsyncValidators(this.seedAsyncValidators);
     }
     this.push(control);
   }

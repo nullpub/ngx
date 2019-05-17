@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.3.0](https://github.com/nullpub/ngx/compare/v0.2.2...v0.3.0) (2019-05-17)
+
+
+### Features
+
+* **io-form-array:** extend FormArray to autopatch new controls ([98d915f](https://github.com/nullpub/ngx/commit/98d915f))
+
+
+
 ## [0.2.2](https://github.com/nullpub/ngx/compare/v0.2.1...v0.2.2) (2019-05-16)
 
 

@@ -25,6 +25,7 @@ export class IoFormArray extends FormArray {
   seedValue?: any;
   seedValidators?: ValidatorFn | ValidatorFn[];
   seedAsyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
+  seedOther?: (control: AbstractControl) => void;
 
   // Extend patchValue to autoGenerate controls
   patchValue(
@@ -54,6 +55,9 @@ export class IoFormArray extends FormArray {
     }
     if (this.seedAsyncValidators) {
       control.setAsyncValidators(this.seedAsyncValidators);
+    }
+    if (this.seedOther) {
+      this.seedOther(control);
     }
     this.push(control);
   }

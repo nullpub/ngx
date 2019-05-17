@@ -4,6 +4,8 @@ import { EnumType, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
 import * as t from 'io-ts';
 import { DateFromISOStringType, OptionFromNullableType } from 'io-ts-types';
 
+import { IoFormArray } from './io-form-array.class';
+
 export type Control =
   | t.StringType
   | t.NumberType
@@ -34,28 +36,38 @@ export class IoFormService {
 
   ioToForm(io: IO): FormControl | FormGroup | FormArray {
     switch (io._tag) {
+      // FormControls
       case 'BooleanType':
       case 'NumberType':
       case 'StringType':
       case 'EnumType':
       case 'DateFromISOStringType':
-        return this.fb.control(undefined);
-      case 'ArrayType':
-        return this.fb.array([]);
-      case 'OptionFromOptionalType':
-      case 'OptionFromNullableType':
-        // Unwrap Option types
-        return this.ioToForm(io.type);
+        return new FormControl();
+
+      // FormGroups
       case 'InterfaceType':
         let group = {};
         for (let k in io.props) {
           group[k] = this.ioToForm(io.props[k]);
         }
-        return this.fb.group(group);
+        return new FormGroup(group);
+
+      // FormArrays
+      case 'ArrayType':
+        const generateControl = () => this.ioToForm(io.type);
+        return new IoFormArray([], undefined, undefined, generateControl);
+
+      // Special Case: Unwrap Options
+      case 'OptionFromOptionalType':
+      case 'OptionFromNullableType':
+        // Unwrap Option types
+        return this.ioToForm(io.type);
+
+      // Default to FormControl for unknown types
       default:
         // Warn and default to FormControl for things we don't understand.
         console.warn(UNKNOWN_TYPE_WARNING, io);
-        return this.fb.control(undefined);
+        return new FormControl();
     }
   }
 

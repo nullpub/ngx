@@ -22,3 +22,4 @@ export * from './lib/either/either.module';
  */
 export * from './lib/io-form/io-form.module';
 export * from './lib/io-form/io-form.service';
+export * from './lib/io-form/io-form-array.class';

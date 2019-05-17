@@ -28,16 +28,19 @@ export class IoFormArray extends FormArray {
 
   // Extend patchValue to autoGenerate controls
   patchValue(
-    value: any[],
+    value?: any[],
     options: { onlySelf?: boolean; emitEvent?: boolean } = {}
   ): void {
-    // Create enough controls to handle values
-    for (let i = this.controls.length; i < value.length; i++) {
-      this.pushControl();
-    }
+    // Handle non-array input
+    if (Array.isArray(value)) {
+      // Create enough controls to handle values
+      for (let i = this.controls.length; i < value.length; i++) {
+        this.pushControl();
+      }
 
-    // Let native patch do its work
-    super.patchValue(value, options);
+      // Let native patch do its work
+      super.patchValue(value, options);
+    }
   }
 
   // Push a new control with seed value if it exists

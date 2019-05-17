@@ -44,8 +44,8 @@ export class IoFormArray extends FormArray {
     }
   }
 
-  // Push a new control with seed value if it exists
-  pushControl(): void {
+  // Push a new control with seed value, then patch with passed value if it exists;
+  pushControl(value?: any): void {
     const control = this.generateControl();
     if (this.seedValue) {
       control.patchValue(this.seedValue);
@@ -58,6 +58,9 @@ export class IoFormArray extends FormArray {
     }
     if (this.seedOther) {
       this.seedOther(control);
+    }
+    if (value) {
+      control.patchValue(value);
     }
     this.push(control);
   }

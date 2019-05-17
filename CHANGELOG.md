@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.4.0](https://github.com/nullpub/ngx/compare/v0.3.0...v0.4.0) (2019-05-17)
+
+
+### Features
+
+* **io-form-array:** add seed values for validators ([7b52865](https://github.com/nullpub/ngx/commit/7b52865))
+
+
+
 # [0.3.0](https://github.com/nullpub/ngx/compare/v0.2.2...v0.3.0) (2019-05-17)
 
 

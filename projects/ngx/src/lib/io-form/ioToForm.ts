@@ -1,5 +1,5 @@
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { EnumType, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
+import { FormControl, FormGroup } from '@angular/forms';
+import { DateFromDatelikeType, EnumType, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
 import * as t from 'io-ts';
 import { DateFromISOStringType, OptionFromNullableType } from 'io-ts-types';
 
@@ -10,7 +10,8 @@ export type Control =
   | t.NumberType
   | t.BooleanType
   | EnumType<any>
-  | DateFromISOStringType;
+  | DateFromISOStringType
+  | DateFromDatelikeType;
 
 export type Array = t.ArrayType<Control | Group>;
 

@@ -37,6 +37,7 @@ export const ioToForm = (io: IO): FormGroup | IoFormArray | FormControl => {
     case 'StringType':
     case 'EnumType':
     case 'DateFromISOStringType':
+    case 'DateFromDatelikeType':
       return new FormControl();
 
     // FormGroups

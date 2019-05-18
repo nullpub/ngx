@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.2](https://github.com/nullpub/ngx/compare/v0.7.1...v0.7.2) (2019-05-18)
+
+
+### Bug Fixes
+
+* **io-forms:** account for DateFromDatelikeType tag in ioToForm ([c3e47b7](https://github.com/nullpub/ngx/commit/c3e47b7))
+
+
+
 ## [0.7.1](https://github.com/nullpub/ngx/compare/v0.7.0...v0.7.1) (2019-05-18)
 
 

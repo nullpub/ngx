@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.8.0](https://github.com/nullpub/ngx/compare/v0.7.2...v0.8.0) (2019-05-18)
+
+
+### Features
+
+* **io-form:** added IoFormGroup with a safer patchValue than FormGroup ([5899220](https://github.com/nullpub/ngx/commit/5899220))
+
+
+
 ## [0.7.2](https://github.com/nullpub/ngx/compare/v0.7.1...v0.7.2) (2019-05-18)
 
 

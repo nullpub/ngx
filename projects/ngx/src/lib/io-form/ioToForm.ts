@@ -1,9 +1,10 @@
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { DateFromDatelikeType, EnumType, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
 import * as t from 'io-ts';
 import { DateFromISOStringType, OptionFromNullableType } from 'io-ts-types';
 
 import { IoFormArray } from './io-form-array.class';
+import { IoFormGroup } from './io-form-group.class';
 
 export type Control =
   | t.StringType
@@ -29,7 +30,7 @@ export type Container = Group | Array;
 const UNKNOWN_TYPE_WARNING =
   'IoFormService encountered an unknown type codec, defaulting to FormControl for type';
 
-export const ioToForm = (io: IO): FormGroup | IoFormArray | FormControl => {
+export const ioToForm = (io: IO): IoFormGroup | IoFormArray | FormControl => {
   switch (io._tag) {
     // FormControls
     case 'BooleanType':
@@ -40,13 +41,13 @@ export const ioToForm = (io: IO): FormGroup | IoFormArray | FormControl => {
     case 'DateFromDatelikeType':
       return new FormControl();
 
-    // FormGroups
+    // IoFormGroups
     case 'InterfaceType':
       let group = {};
       for (let k in io.props) {
         group[k] = ioToForm(io.props[k]);
       }
-      return new FormGroup(group);
+      return new IoFormGroup(group);
 
     // FormArrays
     case 'ArrayType':

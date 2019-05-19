@@ -1,5 +1,5 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { none, Option } from 'fp-ts/lib/Option';
+import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { fromNullable, none, Option } from 'fp-ts/lib/Option';
 
 interface OptionCaseView {
   viewContainerRef: ViewContainerRef;
@@ -12,53 +12,50 @@ interface OptionCaseView {
 export class OptionDirective {
   option: Option<any> = none;
 
-  noneCaseView?: OptionCaseView;
-  someCaseView?: OptionCaseView;
+  noneCases: OptionCaseView[] = [];
+  someCases: OptionCaseView[] = [];
 
-  currentCaseView?: OptionCaseView;
+  mountedCases: OptionCaseView[] = [];
 
   @Input()
   set nllOption(option: Option<any>) {
+    if (this.option._tag !== option._tag) {
+      this.mountedCases.forEach(this.removeCaseView);
+    }
+
     this.option = option;
 
     if (option.isNone()) {
-      this.setCaseView(this.noneCaseView);
+      this.noneCases.forEach(this.ensureCaseView);
+      this.mountedCases = this.noneCases;
     }
 
     if (option.isSome()) {
-      this.setCaseView(this.someCaseView, {
+      const context = {
         $implicit: option.value,
-      });
+      };
+      this.someCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.someCases;
     }
   }
 
   registerNone = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.noneCaseView = { viewContainerRef, templateRef });
+  ) => this.noneCases.push({ viewContainerRef, templateRef });
   registerSome = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.someCaseView = { viewContainerRef, templateRef });
+  ) => this.someCases.push({ viewContainerRef, templateRef });
 
-  /**
-   * This is a naive, always update on changes solution. Ideally, we
-   * would update the context for the current caseView if it is the same
-   * case, instead of clearing and rerendering. However, EmbeddedViewRef
-   * has context set as readonly. Which is weird considering:
-   *
-   * https://github.com/angular/angular/blob/master/packages/common/src/directives/ng_for_of.ts#L240
-   */
-  setCaseView = (caseView?: OptionCaseView, context?: any) => {
-    if (this.currentCaseView !== undefined) {
-      this.removeCaseView(this.currentCaseView);
-    }
-
-    if (caseView !== undefined) {
-      this.createCaseView(caseView, context);
-    }
-
-    this.currentCaseView = caseView;
+  ensureCaseView = (caseView: OptionCaseView, context?: any) => {
+    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
+      caseView.viewContainerRef.get(0)
+    ));
+    viewRef.foldL(
+      () => this.createCaseView(caseView, context),
+      vr => this.updateViewRef(vr, context)
+    );
   };
 
   createCaseView = (caseView: OptionCaseView, context?: any) => {
@@ -67,4 +64,13 @@ export class OptionDirective {
 
   removeCaseView = (caseView: OptionCaseView) =>
     caseView.viewContainerRef.clear();
+
+  updateViewRef = (viewRef: EmbeddedViewRef<any>, context?: any) => {
+    if (context) {
+      Object.keys(context).forEach(key => {
+        viewRef.context[key] = context[key];
+      });
+      viewRef.detectChanges();
+    }
+  };
 }

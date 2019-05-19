@@ -1,5 +1,6 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AsyncData, pending } from '@nll/dux';
+import { fromNullable } from 'fp-ts/lib/Option';
 
 interface AsyncCaseView {
   viewContainerRef: ViewContainerRef;
@@ -12,69 +13,66 @@ interface AsyncCaseView {
 export class AsyncDataDirective {
   asyncData: AsyncData<any, any> = pending();
 
-  pendingCaseView?: AsyncCaseView;
-  failureCaseView?: AsyncCaseView;
-  successCaseView?: AsyncCaseView;
+  pendingCases: AsyncCaseView[] = [];
+  failureCases: AsyncCaseView[] = [];
+  successCases: AsyncCaseView[] = [];
 
-  currentCaseView?: AsyncCaseView;
+  mountedCases: AsyncCaseView[] = [];
 
   @Input()
   set nllAsyncData(asyncData: AsyncData<any, any>) {
-    this.asyncData = asyncData;
+    // If new and old ADT are different, unmount previous viewRefs
+    if (asyncData._tag !== this.asyncData._tag) {
+      this.mountedCases.forEach(this.removeCaseView);
+    }
 
     if (asyncData.isPending()) {
-      this.setCaseView(this.pendingCaseView);
+      this.pendingCases.forEach(this.ensureCaseView);
+      this.mountedCases = this.pendingCases;
     }
 
     if (asyncData.isFailure()) {
-      this.setCaseView(this.failureCaseView, {
+      const context = {
         $implicit: asyncData.error,
         refreshing: asyncData.refreshing,
-      });
+      };
+      this.failureCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.failureCases;
     }
 
     if (asyncData.isSuccess()) {
-      this.setCaseView(this.successCaseView, {
+      const context = {
         $implicit: asyncData.value,
         refreshing: asyncData.refreshing,
-      });
+      };
+      this.successCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.successCases;
     }
+
+    this.asyncData = asyncData;
   }
 
   registerPending = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.pendingCaseView = { viewContainerRef, templateRef });
+  ) => this.pendingCases.push({ viewContainerRef, templateRef });
   registerFailure = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.failureCaseView = { viewContainerRef, templateRef });
+  ) => this.failureCases.push({ viewContainerRef, templateRef });
   registerSuccess = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.successCaseView = { viewContainerRef, templateRef });
+  ) => this.successCases.push({ viewContainerRef, templateRef });
 
-  /**
-   * This is a naive, always update on changes solution. Ideally, we
-   * would update the context for the current caseView if it is the same
-   * case, instead of clearing and rerendering. However, EmbeddedViewRef
-   * has context set as readonly. Which is weird considering:
-   *
-   * https://github.com/angular/angular/blob/master/packages/common/src/directives/ng_for_of.ts#L240
-   *
-   * Likely, this means we can't change the context reference but
-   * we are allowed to change the context values and call checkForChanges
-   */
-  setCaseView = (caseView?: AsyncCaseView, context?: any) => {
-    if (this.currentCaseView !== undefined) {
-      this.removeCaseView(this.currentCaseView);
-    }
-
-    if (caseView !== undefined) {
-      this.createCaseView(caseView, context);
-    }
-
-    this.currentCaseView = caseView;
+  ensureCaseView = (caseView: AsyncCaseView, context?: any) => {
+    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
+      caseView.viewContainerRef.get(0)
+    ));
+    viewRef.foldL(
+      () => this.createCaseView(caseView, context),
+      vr => this.updateViewRef(vr, context)
+    );
   };
 
   createCaseView = (caseView: AsyncCaseView, context?: any) => {
@@ -83,4 +81,13 @@ export class AsyncDataDirective {
 
   removeCaseView = (caseView: AsyncCaseView) =>
     caseView.viewContainerRef.clear();
+
+  updateViewRef = (viewRef: EmbeddedViewRef<any>, context?: any) => {
+    if (context) {
+      Object.keys(context).forEach(key => {
+        viewRef.context[key] = context[key];
+      });
+      viewRef.detectChanges();
+    }
+  };
 }

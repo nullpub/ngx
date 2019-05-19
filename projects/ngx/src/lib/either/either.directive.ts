@@ -1,5 +1,6 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Either } from 'fp-ts/lib/Either';
+import { fromNullable } from 'fp-ts/lib/Option';
 
 interface EitherCaseView {
   viewContainerRef: ViewContainerRef;
@@ -12,54 +13,51 @@ interface EitherCaseView {
 export class EitherDirective {
   either!: Either<any, any>;
 
-  leftCaseView?: EitherCaseView;
-  rightCaseView?: EitherCaseView;
+  leftCases: EitherCaseView[] = [];
+  rightCases: EitherCaseView[] = [];
 
-  currentCaseView?: EitherCaseView;
+  mountedCases?: EitherCaseView[] = [];
 
   @Input()
   set nllEither(either: Either<any, any>) {
+    if (this.either._tag !== either._tag) {
+      this.mountedCases.forEach(this.removeCaseView);
+    }
+
     this.either = either;
 
     if (either.isLeft()) {
-      this.setCaseView(this.leftCaseView);
+      this.leftCases.forEach(this.ensureCaseView);
+      this.mountedCases = this.leftCases;
     }
 
     if (either.isRight()) {
-      this.setCaseView(this.rightCaseView, {
+      const context = {
         $implicit: either.value,
-      });
+      };
+      this.rightCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.rightCases;
     }
   }
 
   registerLeft = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.leftCaseView = { viewContainerRef, templateRef });
+  ) => this.leftCases.push({ viewContainerRef, templateRef });
 
   registerRight = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => (this.rightCaseView = { viewContainerRef, templateRef });
+  ) => this.rightCases.push({ viewContainerRef, templateRef });
 
-  /**
-   * This is a naive, always update on changes solution. Ideally, we
-   * would update the context for the current caseView if it is the same
-   * case, instead of clearing and rerendering. However, EmbeddedViewRef
-   * has context set as readonly. Which is weird considering:
-   *
-   * https://github.com/angular/angular/blob/master/packages/common/src/directives/ng_for_of.ts#L240
-   */
-  setCaseView = (caseView?: EitherCaseView, context?: any) => {
-    if (this.currentCaseView !== undefined) {
-      this.removeCaseView(this.currentCaseView);
-    }
-
-    if (caseView !== undefined) {
-      this.createCaseView(caseView, context);
-    }
-
-    this.currentCaseView = caseView;
+  ensureCaseView = (caseView: EitherCaseView, context?: any) => {
+    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
+      caseView.viewContainerRef.get(0)
+    ));
+    viewRef.foldL(
+      () => this.createCaseView(caseView, context),
+      vr => this.updateViewRef(vr, context)
+    );
   };
 
   createCaseView = (caseView: EitherCaseView, context?: any) => {
@@ -68,4 +66,13 @@ export class EitherDirective {
 
   removeCaseView = (caseView: EitherCaseView) =>
     caseView.viewContainerRef.clear();
+
+  updateViewRef = (viewRef: EmbeddedViewRef<any>, context?: any) => {
+    if (context) {
+      Object.keys(context).forEach(key => {
+        viewRef.context[key] = context[key];
+      });
+      viewRef.detectChanges();
+    }
+  };
 }

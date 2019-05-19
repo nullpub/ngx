@@ -4,15 +4,16 @@ import { none, some } from 'fp-ts/lib/Option';
 export const genRandomAsyncData = () => {
   const asyncCase = Math.floor(Math.random() * 1000) % 3;
   const refreshing = !!(Math.floor(Math.random() * 1000) % 2);
+  const data = Math.floor(Math.random() * 1000) % 3;
 
   switch (asyncCase) {
     case 0:
       return pending();
     case 1:
-      return failure(new Error('Generated Error'), refreshing);
+      return failure(new Error(`Generated Error ${data}`), refreshing);
     case 2:
     default:
-      return success('Success Data', refreshing);
+      return success(`Success Data ${data}`, refreshing);
   }
 };
 

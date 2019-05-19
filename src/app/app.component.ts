@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { AsyncData, pending } from '@nll/dux';
-import { createOptionFromOptional, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
+import { createOptionFromOptional } from '@nll/utils-ts/lib/io';
 import { Either, right } from 'fp-ts/lib/Either';
 import { none, Option } from 'fp-ts/lib/Option';
 import * as t from 'io-ts';
+import { ioToForm } from 'projects/ngx/src/lib/io-form';
 
-import { IoFormService } from '../../projects/ngx/src/lib/io-form/io-form.service';
 import { genRandomAsyncData, genRandomOption } from './utils';
 
 @Component({
@@ -15,6 +15,12 @@ import { genRandomAsyncData, genRandomOption } from './utils';
       <h1>IO Form Test</h1>
 
       <form [formGroup]="form" (submit)="handleSubmit(form.value)">
+        <span>Foo:</span>
+        <input formControlName="foo" />
+
+        <span>Bar:</span>
+        <input type="number" formControlName="bar" />
+
         <button>Submit</button>
       </form>
 
@@ -34,7 +40,13 @@ import { genRandomAsyncData, genRandomOption } from './utils';
         </div>
 
         <div *nllAsyncSuccess="let value; let refreshing = refreshing">
-          <h3>Success</h3>
+          <h3>Success 1</h3>
+          <p>Value: {{ value }}</p>
+          <p>Refreshing: {{ refreshing | json }}</p>
+        </div>
+
+        <div *nllAsyncSuccess="let value; let refreshing = refreshing">
+          <h3>Success 2</h3>
           <p>Value: {{ value }}</p>
           <p>Refreshing: {{ refreshing | json }}</p>
         </div>
@@ -73,7 +85,7 @@ export class AppComponent {
   });
 
   // This is all it takes to create an arbitrarily sized form
-  readonly form = this.ioSvc.ioToForm(this.io);
+  readonly form = ioToForm(this.io);
 
   handleSubmit(value: any) {
     // Use the IO to validate the form as well.
@@ -81,7 +93,7 @@ export class AppComponent {
     console.log('handleSubmit', this.output);
   }
 
-  constructor(readonly ioSvc: IoFormService) {
+  constructor() {
     setInterval(() => (this.asyncData = genRandomAsyncData()), 1 * 1000);
     setInterval(() => (this.option = genRandomOption()), 1 * 700);
   }

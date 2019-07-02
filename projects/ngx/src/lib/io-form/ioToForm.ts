@@ -10,6 +10,7 @@ export type Control =
   | t.StringType
   | t.NumberType
   | t.BooleanType
+  | t.KeyofType<Record<string, unknown>>
   | EnumType<any>
   | DateFromISOStringType
   | DateFromDatelikeType;
@@ -39,6 +40,7 @@ export const ioToForm = (io: IO): IoFormGroup | IoFormArray | FormControl => {
     case 'EnumType':
     case 'DateFromISOStringType':
     case 'DateFromDatelikeType':
+    case 'KeyofType':
       return new FormControl();
 
     // IoFormGroups

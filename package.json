@@ -28,7 +28,7 @@
     "io-ts": "^1.8.6",
     "io-ts-reporters": "0.0.21",
     "io-ts-types": "^0.4.7",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "monocle-ts": "^1.7.2",
     "newtype-ts": "^0.2.4",
     "rxjs": "^6.5.2",

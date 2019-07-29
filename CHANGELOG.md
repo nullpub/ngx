@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0](https://github.com/nullpub/ngx/compare/v0.10.0...v1.0.0) (2019-07-29)
+
+
+### Features
+
+* upgraded fp-ts and added intersection type to ioToForm ([1a76059](https://github.com/nullpub/ngx/commit/1a76059))
+
+
+
 # [0.10.0](https://github.com/nullpub/ngx/compare/v0.9.0...v0.10.0) (2019-07-02)
 
 

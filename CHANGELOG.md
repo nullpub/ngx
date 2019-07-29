@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.1](https://github.com/nullpub/ngx/compare/v1.0.0...v1.0.1) (2019-07-29)
+
+
+### Bug Fixes
+
+* remove lodash dependency ([dc20ddc](https://github.com/nullpub/ngx/commit/dc20ddc))
+
+
+
 # [1.0.0](https://github.com/nullpub/ngx/compare/v0.10.0...v1.0.0) (2019-07-29)
 
 

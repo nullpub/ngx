@@ -6,7 +6,6 @@ import {
   FormControl,
   ValidatorFn,
 } from '@angular/forms';
-import { zip } from 'lodash';
 
 export class IoFormArray extends FormArray {
   constructor(
@@ -35,9 +34,6 @@ export class IoFormArray extends FormArray {
   ): void {
     // Handle non-array input
     if (Array.isArray(value)) {
-      // Create enough controls to handle values
-      const pairs = zip(value, this.controls);
-
       // Let native patch do its work
       super.patchValue(value, options);
     }

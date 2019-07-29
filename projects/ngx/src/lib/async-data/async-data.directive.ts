@@ -1,6 +1,7 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AsyncData, pending } from '@nll/dux';
-import { fromNullable } from 'fp-ts/lib/Option';
+import { fold, fromNullable } from 'fp-ts/lib/Option';
+import { pipe } from 'fp-ts/lib/pipeable';
 
 interface AsyncCaseView {
   viewContainerRef: ViewContainerRef;
@@ -66,12 +67,12 @@ export class AsyncDataDirective {
   ) => this.successCases.push({ viewContainerRef, templateRef });
 
   ensureCaseView = (caseView: AsyncCaseView, context?: any) => {
-    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
-      caseView.viewContainerRef.get(0)
-    ));
-    viewRef.foldL(
-      () => this.createCaseView(caseView, context),
-      vr => this.updateViewRef(vr, context)
+    pipe(
+      fromNullable(<EmbeddedViewRef<any>>caseView.viewContainerRef.get(0)),
+      fold(
+        () => this.createCaseView(caseView, context),
+        vr => this.updateViewRef(vr, context)
+      )
     );
   };
 

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AsyncData, pending } from '@nll/dux';
-import { createOptionFromOptional } from '@nll/utils-ts/lib/io';
 import { Either, right } from 'fp-ts/lib/Either';
 import { none, Option } from 'fp-ts/lib/Option';
 import * as t from 'io-ts';
@@ -79,10 +78,14 @@ export class AppComponent {
   output: Either<any, any> = right('initial');
 
   // IO type should generally come from backend.
-  readonly io = t.interface({
-    foo: t.string,
-    bar: createOptionFromOptional(t.number),
-  });
+  readonly io = t.intersection([
+    t.interface({
+      foo: t.string,
+    }),
+    t.partial({
+      bar: t.number,
+    }),
+  ]);
 
   // This is all it takes to create an arbitrarily sized form
   readonly form = ioToForm(this.io);

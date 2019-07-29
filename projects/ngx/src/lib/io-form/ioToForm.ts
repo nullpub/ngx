@@ -1,7 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { DateFromDatelikeType, EnumType, OptionFromOptionalType } from '@nll/utils-ts/lib/io';
 import * as t from 'io-ts';
-import { DateFromISOStringType, OptionFromNullableType } from 'io-ts-types';
 
 import { IoFormArray } from './io-form-array.class';
 import { IoFormGroup } from './io-form-group.class';
@@ -10,62 +8,67 @@ export type Control =
   | t.StringType
   | t.NumberType
   | t.BooleanType
-  | t.KeyofType<Record<string, unknown>>
-  | EnumType<any>
-  | DateFromISOStringType
-  | DateFromDatelikeType;
+  | t.KeyofType<Record<string, unknown>>;
+
+export type Intersection = t.IntersectionType<Group[]>;
 
 export type Array = t.ArrayType<Control | Group>;
 
-export type Pass =
-  | OptionFromNullableType<Control | Group | Array>
-  | OptionFromOptionalType<Control | Group | Array>;
+export type Group =
+  | t.InterfaceType<{
+      [key: string]: Control | Group | Array;
+    }>
+  | t.PartialType<{
+      [key: string]: Control | Group | Array;
+    }>;
 
-export type Group = t.InterfaceType<{
-  [key: string]: Control | Group | Array | Pass;
-}>;
+export type Container = Intersection | Group | Array;
 
-export type IO = Control | Array | Pass | Group;
-export type Container = Group | Array;
+export type Codec = Container | Control;
 
 const UNKNOWN_TYPE_WARNING =
   'IoFormService encountered an unknown type codec, defaulting to FormControl for type';
 
-export const ioToForm = (io: IO): IoFormGroup | IoFormArray | FormControl => {
-  switch (io._tag) {
+export const groupToForm = (
+  group: Group,
+  formGroup = new IoFormGroup({})
+): IoFormGroup => {
+  Object.keys(group.props).forEach(k =>
+    formGroup.addControl(k, ioToForm(group.props[k]))
+  );
+  return formGroup;
+};
+
+export const ioToForm = (
+  codec: Codec
+): IoFormGroup | IoFormArray | FormControl => {
+  switch (codec._tag) {
     // FormControls
     case 'BooleanType':
     case 'NumberType':
     case 'StringType':
-    case 'EnumType':
-    case 'DateFromISOStringType':
-    case 'DateFromDatelikeType':
     case 'KeyofType':
       return new FormControl();
 
-    // IoFormGroups
+    // IoFormGroup
     case 'InterfaceType':
-      let group = {};
-      for (let k in io.props) {
-        group[k] = ioToForm(io.props[k]);
-      }
-      return new IoFormGroup(group);
+    case 'PartialType':
+      return groupToForm(codec);
 
-    // FormArrays
+    case 'IntersectionType':
+      const formGroup = new IoFormGroup({});
+      codec.types.forEach(c => groupToForm(c, formGroup)); // MUTABLE NONSENSE
+      return formGroup;
+
+    // IoFormArray
     case 'ArrayType':
-      const generateControl = () => ioToForm(io.type);
+      const generateControl = () => ioToForm(codec.type);
       return new IoFormArray([], undefined, undefined, generateControl);
-
-    // Special Case: Unwrap Options
-    case 'OptionFromOptionalType':
-    case 'OptionFromNullableType':
-      // Unwrap Option types
-      return ioToForm(io.type);
 
     // Default to FormControl for unknown types
     default:
       // Warn and default to FormControl for things we don't understand.
-      console.warn(UNKNOWN_TYPE_WARNING, io);
+      console.warn(UNKNOWN_TYPE_WARNING, codec);
       return new FormControl();
   }
 };

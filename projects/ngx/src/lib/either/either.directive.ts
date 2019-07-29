@@ -1,6 +1,7 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Either } from 'fp-ts/lib/Either';
-import { fromNullable } from 'fp-ts/lib/Option';
+import { Either, isLeft, isRight } from 'fp-ts/lib/Either';
+import { fold, fromNullable } from 'fp-ts/lib/Option';
+import { pipe } from 'fp-ts/lib/pipeable';
 
 interface EitherCaseView {
   viewContainerRef: ViewContainerRef;
@@ -26,14 +27,14 @@ export class EitherDirective {
 
     this.either = either;
 
-    if (either.isLeft()) {
+    if (isLeft(either)) {
       this.leftCases.forEach(this.ensureCaseView);
       this.mountedCases = this.leftCases;
     }
 
-    if (either.isRight()) {
+    if (isRight(either)) {
       const context = {
-        $implicit: either.value,
+        $implicit: either.right,
       };
       this.rightCases.forEach(cv => this.ensureCaseView(cv, context));
       this.mountedCases = this.rightCases;
@@ -51,12 +52,12 @@ export class EitherDirective {
   ) => this.rightCases.push({ viewContainerRef, templateRef });
 
   ensureCaseView = (caseView: EitherCaseView, context?: any) => {
-    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
-      caseView.viewContainerRef.get(0)
-    ));
-    viewRef.foldL(
-      () => this.createCaseView(caseView, context),
-      vr => this.updateViewRef(vr, context)
+    pipe(
+      fromNullable(<EmbeddedViewRef<any>>caseView.viewContainerRef.get(0)),
+      fold(
+        () => this.createCaseView(caseView, context),
+        vr => this.updateViewRef(vr, context)
+      )
     );
   };
 

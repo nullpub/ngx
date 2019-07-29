@@ -1,5 +1,6 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { fromNullable, none, Option } from 'fp-ts/lib/Option';
+import { fold, fromNullable, isNone, isSome, none, Option } from 'fp-ts/lib/Option';
+import { pipe } from 'fp-ts/lib/pipeable';
 
 interface OptionCaseView {
   viewContainerRef: ViewContainerRef;
@@ -25,12 +26,12 @@ export class OptionDirective {
 
     this.option = option;
 
-    if (option.isNone()) {
+    if (isNone(option)) {
       this.noneCases.forEach(this.ensureCaseView);
       this.mountedCases = this.noneCases;
     }
 
-    if (option.isSome()) {
+    if (isSome(option)) {
       const context = {
         $implicit: option.value,
       };
@@ -49,12 +50,12 @@ export class OptionDirective {
   ) => this.someCases.push({ viewContainerRef, templateRef });
 
   ensureCaseView = (caseView: OptionCaseView, context?: any) => {
-    const viewRef = fromNullable(<EmbeddedViewRef<any>>(
-      caseView.viewContainerRef.get(0)
-    ));
-    viewRef.foldL(
-      () => this.createCaseView(caseView, context),
-      vr => this.updateViewRef(vr, context)
+    pipe(
+      fromNullable(<EmbeddedViewRef<any>>caseView.viewContainerRef.get(0)),
+      fold(
+        () => this.createCaseView(caseView, context),
+        vr => this.updateViewRef(vr, context)
+      )
     );
   };
 

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.2.0](https://github.com/nullpub/ngx/compare/v1.0.1...v1.2.0) (2019-07-31)
+
+
+### Features
+
+* added initial to AsyncDataDirective ([65b3808](https://github.com/nullpub/ngx/commit/65b3808))
+
+
+
 # [1.1.0](https://github.com/nullpub/ngx/compare/v1.0.1...v1.1.0) (2019-07-31)
 
 

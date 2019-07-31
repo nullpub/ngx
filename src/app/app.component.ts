@@ -28,6 +28,10 @@ import { genRandomAsyncData, genRandomOption } from './utils';
       <div [nllAsyncData]="asyncData">
         <h2>This is inside the asyncData div</h2>
 
+        <div *nllAsyncInitial>
+          <h3>Initial</h3>
+        </div>
+
         <div *nllAsyncPending>
           <h3>Pending</h3>
         </div>

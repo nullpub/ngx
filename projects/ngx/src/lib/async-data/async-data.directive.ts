@@ -1,5 +1,5 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AsyncData, pending } from '@nll/dux';
+import { AsyncData, initial } from '@nll/dux';
 import { fold, fromNullable } from 'fp-ts/lib/Option';
 import { pipe } from 'fp-ts/lib/pipeable';
 
@@ -12,8 +12,9 @@ interface AsyncCaseView {
   selector: '[nllAsyncData]',
 })
 export class AsyncDataDirective {
-  asyncData: AsyncData<any, any> = pending();
+  asyncData: AsyncData<any, any> = initial();
 
+  initialCases: AsyncCaseView[] = [];
   pendingCases: AsyncCaseView[] = [];
   failureCases: AsyncCaseView[] = [];
   successCases: AsyncCaseView[] = [];
@@ -25,6 +26,11 @@ export class AsyncDataDirective {
     // If new and old ADT are different, unmount previous viewRefs
     if (asyncData._tag !== this.asyncData._tag) {
       this.mountedCases.forEach(this.removeCaseView);
+    }
+
+    if (asyncData.isInitial()) {
+      this.initialCases.forEach(this.ensureCaseView);
+      this.mountedCases = this.initialCases;
     }
 
     if (asyncData.isPending()) {
@@ -53,6 +59,10 @@ export class AsyncDataDirective {
     this.asyncData = asyncData;
   }
 
+  registerInitial = (
+    viewContainerRef: ViewContainerRef,
+    templateRef: TemplateRef<Object>
+  ) => this.initialCases.push({ viewContainerRef, templateRef });
   registerPending = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>

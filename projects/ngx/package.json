@@ -1,12 +1,10 @@
 {
   "name": "@nll/ngx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "peerDependencies": {
-    "@nll/dux": "^2.1.0",
-    "fp-ts": "^2",
-    "io-ts": "^2",
-    "io-ts-types": "^0",
-    "newtype-ts": "^0.3.2"
+    "@nll/dux": "^5.1.1",
+    "fp-ts": "^2.0.3",
+    "io-ts": "^2.0.0"
   }
 }

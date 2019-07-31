@@ -1,6 +1,6 @@
 {
   "name": "nll-ngx",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "scripts": {
     "release": "npx standard-version",
     "ng": "ng",
@@ -20,15 +20,11 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@nll/dux": "^4",
     "core-js": "^2.5.4",
-    "fp-ts": "^2",
-    "io-ts": "^2",
-    "io-ts-reporters": "^1",
-    "io-ts-types": "^0.5.0",
-    "monocle-ts": "^2",
-    "newtype-ts": "^0",
-    "rxjs": "^6",
+    "@nll/dux": "^5.1.1",
+    "fp-ts": "^2.0.3",
+    "io-ts": "^2.0.0",
+    "rxjs": "^6.5.2",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

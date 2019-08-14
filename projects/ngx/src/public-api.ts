@@ -3,9 +3,9 @@
  */
 
 /**
- * AsyncData Structural Directive
+ * Datum Structural Directive
  */
-export * from './lib/async-data/async-data.module';
+export * from './lib/datum/datum.module';
 
 /**
  * Option Structural Directive

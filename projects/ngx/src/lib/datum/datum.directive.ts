@@ -1,62 +1,69 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AsyncData, initial } from '@nll/dux';
-import { fold, fromNullable } from 'fp-ts/lib/Option';
-import { pipe } from 'fp-ts/lib/pipeable';
+import { Datum, getEq, initial, isInitial, isPending, isRefresh, isReplete } from '@nll/datum/es6/Datum';
+import { DatumEither } from '@nll/datum/es6/DatumEither';
+import { Eq } from 'fp-ts/es6/Eq';
+import { fold, fromNullable } from 'fp-ts/es6/Option';
+import { pipe } from 'fp-ts/es6/pipeable';
 
-interface AsyncCaseView {
+interface DatumCaseView {
   viewContainerRef: ViewContainerRef;
   templateRef: TemplateRef<Object>;
 }
 
+const objEq: Eq<unknown> = {
+  equals: (a, b) => a === b,
+};
+const datumEq = getEq(objEq);
+
 @Directive({
-  selector: '[nllAsyncData]',
+  selector: '[nllDatum]',
 })
-export class AsyncDataDirective {
-  asyncData: AsyncData<any, any> = initial();
+export class DatumDirective {
+  private datum: Datum<unknown> = initial;
 
-  initialCases: AsyncCaseView[] = [];
-  pendingCases: AsyncCaseView[] = [];
-  failureCases: AsyncCaseView[] = [];
-  successCases: AsyncCaseView[] = [];
+  initialCases: DatumCaseView[] = [];
+  pendingCases: DatumCaseView[] = [];
+  refreshCases: DatumCaseView[] = [];
+  repleteCases: DatumCaseView[] = [];
 
-  mountedCases: AsyncCaseView[] = [];
+  mountedCases: DatumCaseView[] = [];
 
   @Input()
-  set nllAsyncData(asyncData: AsyncData<any, any>) {
+  set nllDatum(datum: Datum<unknown>) {
     // If new and old ADT are different, unmount previous viewRefs
-    if (asyncData._tag !== this.asyncData._tag) {
+    if (!datumEq.equals(datum, this.datum)) {
       this.mountedCases.forEach(this.removeCaseView);
     }
 
-    if (asyncData.isInitial()) {
+    if (isInitial(datum)) {
       this.initialCases.forEach(this.ensureCaseView);
       this.mountedCases = this.initialCases;
     }
 
-    if (asyncData.isPending()) {
+    if (isPending(datum)) {
       this.pendingCases.forEach(this.ensureCaseView);
       this.mountedCases = this.pendingCases;
     }
 
-    if (asyncData.isFailure()) {
+    if (isRefresh(datum)) {
       const context = {
-        $implicit: asyncData.error,
-        refreshing: asyncData.refreshing,
+        $implicit: datum.value,
+        refreshing: true,
       };
-      this.failureCases.forEach(cv => this.ensureCaseView(cv, context));
-      this.mountedCases = this.failureCases;
+      this.refreshCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.refreshCases;
     }
 
-    if (asyncData.isSuccess()) {
+    if (isReplete(datum)) {
       const context = {
-        $implicit: asyncData.value,
-        refreshing: asyncData.refreshing,
+        $implicit: datum.value,
+        refreshing: false,
       };
-      this.successCases.forEach(cv => this.ensureCaseView(cv, context));
-      this.mountedCases = this.successCases;
+      this.repleteCases.forEach(cv => this.ensureCaseView(cv, context));
+      this.mountedCases = this.repleteCases;
     }
 
-    this.asyncData = asyncData;
+    this.datum = datum;
   }
 
   registerInitial = (
@@ -67,16 +74,16 @@ export class AsyncDataDirective {
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
   ) => this.pendingCases.push({ viewContainerRef, templateRef });
-  registerFailure = (
+  registerRefresh = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => this.failureCases.push({ viewContainerRef, templateRef });
-  registerSuccess = (
+  ) => this.refreshCases.push({ viewContainerRef, templateRef });
+  registerReplete = (
     viewContainerRef: ViewContainerRef,
     templateRef: TemplateRef<Object>
-  ) => this.successCases.push({ viewContainerRef, templateRef });
+  ) => this.repleteCases.push({ viewContainerRef, templateRef });
 
-  ensureCaseView = (caseView: AsyncCaseView, context?: any) => {
+  ensureCaseView = (caseView: DatumCaseView, context?: any) => {
     pipe(
       fromNullable(<EmbeddedViewRef<any>>caseView.viewContainerRef.get(0)),
       fold(
@@ -86,11 +93,11 @@ export class AsyncDataDirective {
     );
   };
 
-  createCaseView = (caseView: AsyncCaseView, context?: any) => {
+  createCaseView = (caseView: DatumCaseView, context?: any) => {
     caseView.viewContainerRef.createEmbeddedView(caseView.templateRef, context);
   };
 
-  removeCaseView = (caseView: AsyncCaseView) =>
+  removeCaseView = (caseView: DatumCaseView) =>
     caseView.viewContainerRef.clear();
 
   updateViewRef = (viewRef: EmbeddedViewRef<any>, context?: any) => {

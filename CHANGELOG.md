@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [2.0.0](https://github.com/nullpub/ngx/compare/v1.2.0...v2.0.0) (2019-08-14)
+
+
+### Features
+
+* created Datum and DatumEither directives ([73af37f](https://github.com/nullpub/ngx/commit/73af37f))
+
+
+### BREAKING CHANGES
+
+* removed AsyncData directive
+
+
+
 # [1.2.0](https://github.com/nullpub/ngx/compare/v1.0.1...v1.2.0) (2019-07-31)
 
 

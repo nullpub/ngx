@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { AsyncData, pending } from '@nll/dux';
-import { Either, right } from 'fp-ts/lib/Either';
-import { none, Option } from 'fp-ts/lib/Option';
+import { DatumEither, success } from '@nll/datum/es6/DatumEither';
+import { Either, right } from 'fp-ts/es6/Either';
+import { none, Option } from 'fp-ts/es6/Option';
 import * as t from 'io-ts';
 import { ioToForm } from 'projects/ngx/src/lib/io-form';
 
-import { genRandomAsyncData, genRandomOption } from './utils';
+import { genRandomDatumEither, genRandomOption } from './utils';
 
 @Component({
   selector: 'app-root',
@@ -23,32 +23,32 @@ import { genRandomAsyncData, genRandomOption } from './utils';
         <button>Submit</button>
       </form>
 
-      <h1>Async Data Test</h1>
+      <h1>DatumEither Test</h1>
 
-      <div [nllAsyncData]="asyncData">
-        <h2>This is inside the asyncData div</h2>
+      <div [nllDatumEither]="datumEither">
+        <h2>This is inside the datumEither div</h2>
 
-        <div *nllAsyncInitial>
+        <div *nllInitial>
           <h3>Initial</h3>
         </div>
 
-        <div *nllAsyncPending>
+        <div *nllPending>
           <h3>Pending</h3>
         </div>
 
-        <div *nllAsyncFailure="let error; let refreshing = refreshing">
+        <div *nllFailure="let error; let refreshing = refreshing">
           <h3>Failure</h3>
           <p>Error: {{ error }}</p>
           <p>Refreshing: {{ refreshing | json }}</p>
         </div>
 
-        <div *nllAsyncSuccess="let value; let refreshing = refreshing">
+        <div *nllSuccess="let value; let refreshing = refreshing">
           <h3>Success 1</h3>
           <p>Value: {{ value }}</p>
           <p>Refreshing: {{ refreshing | json }}</p>
         </div>
 
-        <div *nllAsyncSuccess="let value; let refreshing = refreshing">
+        <div *nllSuccess="let value; let refreshing = refreshing">
           <h3>Success 2</h3>
           <p>Value: {{ value }}</p>
           <p>Refreshing: {{ refreshing | json }}</p>
@@ -76,7 +76,7 @@ import { genRandomAsyncData, genRandomOption } from './utils';
 export class AppComponent {
   title = 'nll-ngx';
 
-  asyncData: AsyncData<any, any> = pending();
+  datumEither: DatumEither<Error, string> = success('Initial Success');
   option: Option<any> = none;
 
   output: Either<any, any> = right('initial');
@@ -101,7 +101,7 @@ export class AppComponent {
   }
 
   constructor() {
-    setInterval(() => (this.asyncData = genRandomAsyncData()), 1 * 1000);
+    setInterval(() => (this.datumEither = genRandomDatumEither()), 1 * 1000);
     setInterval(() => (this.option = genRandomOption()), 1 * 700);
   }
 }

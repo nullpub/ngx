@@ -1,7 +1,7 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Either, isLeft, isRight } from 'fp-ts/lib/Either';
-import { fold, fromNullable } from 'fp-ts/lib/Option';
-import { pipe } from 'fp-ts/lib/pipeable';
+import { Either, isLeft, isRight } from 'fp-ts/es6/Either';
+import { fold, fromNullable } from 'fp-ts/es6/Option';
+import { pipe } from 'fp-ts/es6/pipeable';
 
 interface EitherCaseView {
   viewContainerRef: ViewContainerRef;

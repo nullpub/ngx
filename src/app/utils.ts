@@ -1,21 +1,29 @@
-import { failure, initial, pending, success } from '@nll/dux';
-import { none, some } from 'fp-ts/lib/Option';
+import { datum, datumEither } from '@nll/datum';
+import { left, right } from 'fp-ts/es6/Either';
+import { none, some } from 'fp-ts/es6/Option';
 
-export const genRandomAsyncData = () => {
-  const asyncCase = Math.floor(Math.random() * 1000) % 4;
-  const refreshing = !!(Math.floor(Math.random() * 1000) % 2);
+export const genRandomDatumEither = (): datumEither.DatumEither<
+  Error,
+  string
+> => {
+  const asyncCase = Math.floor(Math.random() * 1000) % 6;
   const data = Math.floor(Math.random() * 1000) % 3;
 
   switch (asyncCase) {
     case 0:
-      return initial();
+      return datum.initial;
     case 1:
-      return pending();
+      return datum.pending;
     case 2:
-      return failure(new Error(`Generated Error ${data}`), refreshing);
+      return datumEither.failure(new Error(`Generated Error ${data}`));
     case 3:
+      return datumEither.success(`Success Data ${data}`);
+    case 4:
+      return datum.refresh(left(new Error(`Generated Error ${data}`)));
+    case 5:
+      return datum.refresh(right(`Success Data ${data}`));
     default:
-      return success(`Success Data ${data}`, refreshing);
+      return datum.initial;
   }
 };
 

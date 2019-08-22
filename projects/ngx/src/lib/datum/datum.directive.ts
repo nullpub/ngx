@@ -1,9 +1,9 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Datum, getEq, initial, isInitial, isPending, isRefresh, isReplete } from '@nll/datum/es6/Datum';
-import { DatumEither } from '@nll/datum/es6/DatumEither';
-import { Eq } from 'fp-ts/es6/Eq';
-import { fold, fromNullable } from 'fp-ts/es6/Option';
-import { pipe } from 'fp-ts/es6/pipeable';
+import { Datum, getEq, initial, isInitial, isPending, isRefresh, isReplete } from '@nll/datum/lib/Datum';
+import { DatumEither } from '@nll/datum/lib/DatumEither';
+import { Eq } from 'fp-ts/lib/Eq';
+import { fold, fromNullable } from 'fp-ts/lib/Option';
+import { pipe } from 'fp-ts/lib/pipeable';
 
 interface DatumCaseView {
   viewContainerRef: ViewContainerRef;

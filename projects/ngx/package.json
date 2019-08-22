@@ -1,10 +1,25 @@
 {
   "name": "@nll/ngx",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": false,
   "peerDependencies": {
-    "@nll/datum": "^2.2.1",
+    "@nll/datum": "^2.5.1",
     "fp-ts": "^2.0.5",
     "io-ts": "^2.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nullpub/ngx.git"
+  },
+  "keywords": [
+    "fp-ts",
+    "adt",
+    "AsyncData"
+  ],
+  "author": "Brandon Blaylock <brandon@null.pub> (https://blaylock.dev)",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/nullpub/ngx/issues"
+  },
+  "homepage": "https://github.com/nullpub/ngx#readme"
 }

@@ -1,6 +1,7 @@
-import { datum, datumEither } from '@nll/datum';
-import { left, right } from 'fp-ts/es6/Either';
-import { none, some } from 'fp-ts/es6/Option';
+import * as datum from '@nll/datum/lib/Datum';
+import * as datumEither from '@nll/datum/lib/DatumEither';
+import { left, right } from 'fp-ts/lib/Either';
+import { none, some } from 'fp-ts/lib/Option';
 
 export const genRandomDatumEither = (): datumEither.DatumEither<
   Error,

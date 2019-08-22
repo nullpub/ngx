@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { DatumEither, success } from '@nll/datum/es6/DatumEither';
-import { Either, right } from 'fp-ts/es6/Either';
-import { none, Option } from 'fp-ts/es6/Option';
+import { DatumEither, success } from '@nll/datum/lib/DatumEither';
+import { Either, right } from 'fp-ts/lib/Either';
+import { none, Option } from 'fp-ts/lib/Option';
 import * as t from 'io-ts';
 import { ioToForm } from 'projects/ngx/src/lib/io-form';
 

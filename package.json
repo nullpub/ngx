@@ -20,7 +20,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@nll/datum": "^2.2.1",
+    "@nll/datum": "^2.5.1",
     "fp-ts": "^2.0.5",
     "io-ts": "^2.0.1",
     "rxjs": "^6.5.2",

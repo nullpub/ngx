@@ -1,6 +1,6 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { fold, fromNullable, isNone, isSome, none, Option } from 'fp-ts/es6/Option';
-import { pipe } from 'fp-ts/es6/pipeable';
+import { fold, fromNullable, isNone, isSome, none, Option } from 'fp-ts/lib/Option';
+import { pipe } from 'fp-ts/lib/pipeable';
 
 interface OptionCaseView {
   viewContainerRef: ViewContainerRef;

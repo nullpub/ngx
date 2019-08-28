@@ -1,6 +1,5 @@
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Datum, getEq, initial, isInitial, isPending, isRefresh, isReplete } from '@nll/datum/lib/Datum';
-import { DatumEither } from '@nll/datum/lib/DatumEither';
 import { Eq } from 'fp-ts/lib/Eq';
 import { fold, fromNullable } from 'fp-ts/lib/Option';
 import { pipe } from 'fp-ts/lib/pipeable';

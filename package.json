@@ -1,6 +1,6 @@
 {
   "name": "nll-ngx",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "scripts": {
     "release": "npx standard-version",
     "ng": "ng",

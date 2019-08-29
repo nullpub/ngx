@@ -1,6 +1,6 @@
 {
   "name": "@nll/ngx",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": false,
   "peerDependencies": {
     "@nll/datum": "^2.6.1",

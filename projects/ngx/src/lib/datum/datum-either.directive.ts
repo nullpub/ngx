@@ -16,7 +16,7 @@ const objEq: Eq<unknown> = {
 };
 const datumEitherEq = getEq(getEqEither(objEq, objEq));
 const isNil = <T>(t: T | undefined | null): boolean =>
-  t === null && t === undefined;
+  t === null || t === undefined;
 
 @Directive({
   selector: '[nllDatumEither]',

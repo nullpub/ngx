@@ -15,6 +15,8 @@ const objEq: Eq<unknown> = {
   equals: (a, b) => a === b,
 };
 const datumEitherEq = getEq(getEqEither(objEq, objEq));
+const isNil = <T>(t: T | undefined | null): boolean =>
+  t === null && t === undefined;
 
 @Directive({
   selector: '[nllDatumEither]',
@@ -30,7 +32,12 @@ export class DatumEitherDirective {
   mountedCases: DatumEitherCaseView[] = [];
 
   @Input()
-  set nllDatumEither(datum: DatumEither<unknown, unknown>) {
+  set nllDatumEither(datum: DatumEither<unknown, unknown> | undefined | null) {
+    if (isNil(datum)) {
+      // Many common pipes will return null in awkward situations, cast to initial in those cases
+      datum = initial;
+    }
+
     // If new and old ADT are different, unmount previous viewRefs
     if (!datumEitherEq.equals(datum, this.datum)) {
       this.mountedCases.forEach(this.removeCaseView);

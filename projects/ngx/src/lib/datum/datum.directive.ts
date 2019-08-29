@@ -13,6 +13,8 @@ const objEq: Eq<unknown> = {
   equals: (a, b) => a === b,
 };
 const datumEq = getEq(objEq);
+const isNil = <T>(t: T | undefined | null): boolean =>
+  t === null && t === undefined;
 
 @Directive({
   selector: '[nllDatum]',
@@ -28,7 +30,12 @@ export class DatumDirective {
   mountedCases: DatumCaseView[] = [];
 
   @Input()
-  set nllDatum(datum: Datum<unknown>) {
+  set nllDatum(datum: Datum<unknown> | undefined | null) {
+    if (isNil(datum)) {
+      // Many common pipes will return null in awkward situations, cast to initial in those cases
+      datum = initial;
+    }
+
     // If new and old ADT are different, unmount previous viewRefs
     if (!datumEq.equals(datum, this.datum)) {
       this.mountedCases.forEach(this.removeCaseView);

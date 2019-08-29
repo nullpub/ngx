@@ -3,7 +3,7 @@
   "version": "4.0.1",
   "private": false,
   "peerDependencies": {
-    "@nll/datum": "^2.6.0",
+    "@nll/datum": "^2.6.1",
     "fp-ts": "^2.0.5",
     "io-ts": "^2.0.1"
   },

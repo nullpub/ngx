@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.3](https://github.com/nullpub/ngx/compare/v4.0.2...v4.0.3) (2019-08-29)
+
+
+### Bug Fixes
+
+* isNil fix ([fbba6fb](https://github.com/nullpub/ngx/commit/fbba6fb))
+
+
+
 ## [4.0.2](https://github.com/nullpub/ngx/compare/v4.0.0...v4.0.2) (2019-08-29)
 
 
